@@ -69,3 +69,23 @@ jobs:
       - name: Push Docker Image
         run: |
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/cc:latest
+
+      # Set up Git LFS
+      - name: Set up Git LFS
+        run: |
+          git config --global user.name "${{ secrets.USERNAME }}"
+          git config --global user.email "${{ secrets.EMAIL }}"
+          git lfs install
+          git lfs track "mlruns/**"
+          git add .gitattributes
+          git commit -m "Track large files in mlruns with Git LFS" || true
+          git push origin main
+      
+      # Save mlruns directory to GitHub
+      - name: Save mlruns directory to GitHub
+        run: |
+          git config --global user.name "${{ secrets.USERNAME }}"
+          git config --global user.email "${{ secrets.EMAIL }}"
+          git add mlruns/
+          git commit -m "Save MLflow runs" || true
+          git push origin main
